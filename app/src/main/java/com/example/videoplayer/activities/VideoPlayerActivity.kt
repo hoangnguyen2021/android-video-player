@@ -4,9 +4,15 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.videoplayer.R
 import com.example.videoplayer.models.VideoFile
 import com.example.videoplayer.utils.IntentUtil
@@ -21,6 +27,7 @@ import kotlin.math.max
 
 class VideoPlayerActivity : AppCompatActivity() {
 
+    private lateinit var rootLayout: RelativeLayout
     private lateinit var playerView: StyledPlayerView
     private lateinit var videoTitleTv: TextView
 
@@ -32,6 +39,18 @@ class VideoPlayerActivity : AppCompatActivity() {
     private var startItemIndex = C.INDEX_UNSET
     private var startPosition = C.TIME_UNSET
 
+    private val exoPlayerListener = object : Player.Listener {
+        override fun onPlayerError(error: PlaybackException) {
+            super.onPlayerError(error)
+
+            Toast.makeText(
+                this@VideoPlayerActivity,
+                "Error playing video",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,15 +59,27 @@ class VideoPlayerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_video_player)
         supportActionBar?.hide()
 
+        rootLayout = findViewById(R.id.root_layout)
         playerView = findViewById(R.id.player_view)
         videoTitleTv = findViewById(R.id.video_title)
 
+        hideSystemBars()
+
+        findViewById<ImageView>(R.id.video_back).apply {
+            setOnClickListener { onBackPressed() }
+        }
+
         playerView.requestFocus()
 
+        // attempt to recover player state
         if (savedInstanceState != null) {
             startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY)
             startItemIndex = savedInstanceState.getInt(KEY_ITEM_INDEX)
             startPosition = savedInstanceState.getLong(KEY_POSITION)
+            Log.d(
+                TAG,
+                "Player state recovered: startAutoPlay: $startAutoPlay, startItemIndex: $startItemIndex, startPosition $startPosition"
+            )
         } else {
             clearStartPosition()
         }
@@ -93,6 +124,10 @@ class VideoPlayerActivity : AppCompatActivity() {
         outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay)
         outState.putInt(KEY_ITEM_INDEX, startItemIndex)
         outState.putLong(KEY_POSITION, startPosition)
+        Log.d(
+            TAG,
+            "Player state saved: startAutoPlay: $startAutoPlay, startItemIndex: $startItemIndex, startPosition $startPosition"
+        )
     }
 
     private fun initializePlayer(): Boolean {
@@ -113,17 +148,7 @@ class VideoPlayerActivity : AppCompatActivity() {
                 .setSeekForwardIncrementMs(10000)
             setRenderersFactory(exoPlayerBuilder, false)
             exoPlayer = exoPlayerBuilder.build().apply {
-                addListener(object : Player.Listener {
-                    override fun onPlayerError(error: PlaybackException) {
-                        super.onPlayerError(error)
-
-                        Toast.makeText(
-                            this@VideoPlayerActivity,
-                            "Error playing video",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                })
+                addListener(exoPlayerListener)
                 setAudioAttributes(AudioAttributes.DEFAULT, true)
                 playWhenReady = startAutoPlay
             }
@@ -135,11 +160,11 @@ class VideoPlayerActivity : AppCompatActivity() {
         }
 
         exoPlayer!!.apply {
-            val haveStartPosition = startItemIndex != C.INDEX_UNSET
-            if (haveStartPosition) {
+            val isStartItemIndexSet = startItemIndex != C.INDEX_UNSET
+            if (isStartItemIndexSet) {
                 seekTo(startItemIndex, startPosition)
             }
-            setMediaItems(mediaItems, !haveStartPosition)
+            setMediaItems(mediaItems, !isStartItemIndexSet)
             prepare()
         }
         return true
@@ -148,6 +173,7 @@ class VideoPlayerActivity : AppCompatActivity() {
     private fun releasePlayer() {
         if (exoPlayer != null) {
             updateStartPosition()
+            exoPlayer?.removeListener(exoPlayerListener)
             exoPlayer?.release()
             exoPlayer = null
             playerView.player = null
@@ -180,13 +206,30 @@ class VideoPlayerActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Resets player state.
+     */
     private fun clearStartPosition() {
         startAutoPlay = true
-        startItemIndex = intent.getIntExtra(START_ITEM_INDEX, 0)
+        startItemIndex = intent.getIntExtra(START_ITEM_INDEX, C.INDEX_UNSET)
         startPosition = C.TIME_UNSET
     }
 
+    private fun hideSystemBars() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        WindowCompat.getInsetsController(window, rootLayout).apply {
+            // Configure the behavior of the hidden system bars
+            systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            // Hide both the status bar and the navigation bar
+            hide(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
     companion object {
+        const val TAG = "VideoPlayerDebug"
+
         const val VIDEO_FILE = "com.example.videoplayer.activities.extras.VIDEO_FILE"
         const val START_ITEM_INDEX = "com.example.videoplayer.activities.extras.POSITION"
         const val VIDEO_FILES = "com.example.videoplayer.activities.extras.bundle.VIDEO_FILES"

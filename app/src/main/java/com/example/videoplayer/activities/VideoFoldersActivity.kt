@@ -124,7 +124,9 @@ class VideoFoldersActivity : AppCompatActivity() {
 
                     val folderPath = path.substringBeforeLast('/')
                     val foundFolder = videoFolders.find { it.folderPath == folderPath }
-                    if (foundFolder !== null) {
+                    // add video file to video folder if it the folder exists in video folder list
+                    // if not, add video folder with the video file to video folder list
+                    if (foundFolder != null) {
                         foundFolder.items.add(videoFile)
                     } else {
                         videoFolders.add(VideoFolder(folderPath, mutableListOf(videoFile)))

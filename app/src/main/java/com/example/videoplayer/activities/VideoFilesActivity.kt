@@ -3,10 +3,12 @@ package com.example.videoplayer.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.videoplayer.R
 import com.example.videoplayer.adapters.VideoFilesAdapter
+import com.example.videoplayer.fragments.VideoBottomSheetDialogFragment
 import com.example.videoplayer.models.VideoFile
 import com.example.videoplayer.models.VideoFolder
 
@@ -30,13 +32,11 @@ class VideoFilesActivity : AppCompatActivity() {
     }
 
     private fun loadVideoFiles(videoFolder: VideoFolder) {
-        val videoFiles: MutableList<VideoFile> = mutableListOf()
-        videoFiles.addAll(videoFolder.items)
-        videoFilesAdapter.submitList(videoFiles)
+        videoFilesAdapter.submitList(videoFolder.items)
     }
 
     private fun initVideoFilesRv() {
-        videoFilesAdapter = VideoFilesAdapter { videoFiles, videoFile, position ->
+        videoFilesAdapter = VideoFilesAdapter(this) { videoFiles, videoFile, position ->
             Intent(this, VideoPlayerActivity::class.java)
                 .apply {
                     val bundle = Bundle()
