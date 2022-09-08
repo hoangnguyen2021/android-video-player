@@ -3,13 +3,10 @@ package com.example.videoplayer.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.videoplayer.R
 import com.example.videoplayer.adapters.VideoFilesAdapter
-import com.example.videoplayer.fragments.VideoBottomSheetDialogFragment
-import com.example.videoplayer.models.VideoFile
 import com.example.videoplayer.models.VideoFolder
 
 class VideoFilesActivity : AppCompatActivity() {

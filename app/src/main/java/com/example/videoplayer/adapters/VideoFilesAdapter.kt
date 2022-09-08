@@ -1,13 +1,13 @@
 package com.example.videoplayer.adapters
 
+import android.content.Context
 import android.text.format.Formatter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,7 +18,7 @@ import com.example.videoplayer.utils.Utils
 import java.io.File
 
 class VideoFilesAdapter(
-    private val activity: FragmentActivity,
+    private val context: Context,
     private val videoFileClickListener: (List<VideoFile>, VideoFile, Int) -> Unit
 ) : ListAdapter<VideoFile, VideoFilesAdapter.VideoFileVH>(VideoFileDiffUtilItemCallback()) {
 
@@ -29,8 +29,6 @@ class VideoFilesAdapter(
         private val videoSizeTv: TextView = itemView.findViewById(R.id.video_size)
         private val videoDurationTv: TextView = itemView.findViewById(R.id.video_duration)
 
-        private val videoBottomSheetDialogFragment = VideoBottomSheetDialogFragment()
-
         fun bind(videoFile: VideoFile, position: Int) {
             videoNameTv.text = videoFile.displayName
             videoSizeTv.text = Formatter.formatFileSize(itemView.context, videoFile.size.toLong())
@@ -39,14 +37,11 @@ class VideoFilesAdapter(
                 .load(File(videoFile.path))
                 .into(thumbnailIv)
             menuMoreIv.setOnClickListener {
-                videoBottomSheetDialogFragment.show(
-                    activity.supportFragmentManager,
-                    VideoBottomSheetDialogFragment.TAG
-                )
-                videoBottomSheetDialogFragment.requireView().findViewById<TextView>(R.id.bottom_sheet_play)
-                    .setOnClickListener {
-                        videoFileClickListener(currentList, videoFile, position)
-                    }
+                VideoBottomSheetDialogFragment(currentList, videoFile, position, videoFileClickListener)
+                    .show(
+                        (context as AppCompatActivity).supportFragmentManager,
+                        VideoBottomSheetDialogFragment.TAG
+                    )
             }
             itemView.setOnClickListener {
                 videoFileClickListener(currentList, videoFile, position)
