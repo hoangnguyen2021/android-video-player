@@ -7,28 +7,36 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.videoplayer.R
 import com.example.videoplayer.adapters.VideoFilesAdapter
-import com.example.videoplayer.models.VideoFolder
+import com.example.videoplayer.data.VideoDataManager
 
 class VideoFilesActivity : AppCompatActivity() {
 
     private lateinit var videoFilesRv: RecyclerView
     private lateinit var videoFilesAdapter: VideoFilesAdapter
 
+    private var folderPath: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_video_files)
 
-        val videoFolder: VideoFolder? = intent.getParcelableExtra(VIDEO_FOLDER)
-        supportActionBar?.title = videoFolder?.folderPath?.substringAfterLast('/')
+        folderPath = intent.getStringExtra(FOLDER_PATH)
+        supportActionBar?.title = folderPath?.substringAfterLast('/')
 
         videoFilesRv = findViewById(R.id.rv_video_files)
 
         initVideoFilesRv()
-        videoFolder?.let { loadVideoFiles(it) }
     }
 
-    private fun loadVideoFiles(videoFolder: VideoFolder) {
+    override fun onResume() {
+        super.onResume()
+
+        folderPath?.let { loadVideoFiles(it) }
+    }
+
+    private fun loadVideoFiles(folderPath: String) {
+        val videoFolder = VideoDataManager.getVideoFolder(this, folderPath)
         videoFilesAdapter.submitList(videoFolder.items)
     }
 
@@ -58,7 +66,7 @@ class VideoFilesActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val VIDEO_FOLDER = "com.example.videoplayer.activities.extras.FOLDER_NAME"
+        const val FOLDER_PATH = "com.example.videoplayer.activities.extras.FOLDER_PATH"
     }
 
 }

@@ -22,7 +22,10 @@ class VideoFoldersAdapter(
             val folderName = videoFolder.folderPath.substringAfterLast('/')
             folderNameTv.text = folderName
             folderPathTv.text = videoFolder.folderPath
-            numberOfFilesTv.text = "${videoFolder.items.size} videos"
+            val numberOfVideos = videoFolder.items.size
+            numberOfFilesTv.text =
+                if (numberOfVideos == 1) "$numberOfVideos video"
+                else "$numberOfVideos videos"
             itemView.setOnClickListener {
                 videoFolderClickListener(videoFolder)
             }

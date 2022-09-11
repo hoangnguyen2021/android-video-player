@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,8 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.videoplayer.R
 import com.example.videoplayer.adapters.VideoFoldersAdapter
-import com.example.videoplayer.models.VideoFolder
-import com.example.videoplayer.models.VideoFile
+import com.example.videoplayer.data.VideoDataManager
 
 class VideoFoldersActivity : AppCompatActivity() {
 
@@ -27,13 +25,19 @@ class VideoFoldersActivity : AppCompatActivity() {
 
         foldersSwipeRefresh = findViewById(R.id.swipe_refresh_folders)
         videoFoldersRv = findViewById(R.id.rv_video_folders)
+
         initVideoFoldersRv()
-        loadVideoFolders()
 
         foldersSwipeRefresh.setOnRefreshListener {
             loadVideoFolders()
             foldersSwipeRefresh.isRefreshing = false
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        loadVideoFolders()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -54,9 +58,8 @@ class VideoFoldersActivity : AppCompatActivity() {
                 loadVideoFolders()
             }
             R.id.share_app -> {
-                Intent()
+                Intent(Intent.ACTION_SEND)
                     .apply {
-                        action = Intent.ACTION_SEND
                         putExtra(Intent.EXTRA_TEXT, appUrl)
                         type = "text/plain"
                     }
@@ -73,7 +76,7 @@ class VideoFoldersActivity : AppCompatActivity() {
         videoFoldersAdapter = VideoFoldersAdapter { videoFolder ->
             Intent(this, VideoFilesActivity::class.java)
                 .apply {
-                    putExtra(VideoFilesActivity.VIDEO_FOLDER, videoFolder)
+                    putExtra(VideoFilesActivity.FOLDER_PATH, videoFolder.folderPath)
                 }
                 .also { startActivity(it) }
         }
@@ -86,53 +89,7 @@ class VideoFoldersActivity : AppCompatActivity() {
     }
 
     private fun loadVideoFolders() {
-        val videoFolders: MutableList<VideoFolder> = mutableListOf()
-        val uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf(
-            MediaStore.Video.Media._ID,
-            MediaStore.Video.Media.TITLE,
-            MediaStore.Video.Media.DISPLAY_NAME,
-            MediaStore.Video.Media.SIZE,
-            MediaStore.Video.Media.DURATION,
-            MediaStore.Video.Media.DATA,
-            MediaStore.Video.Media.DATE_ADDED,
-            MediaStore.Video.Media.MIME_TYPE,
-
-        )
-        contentResolver
-            .query(uri, projection, null, null, null)
-            ?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    val id =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID))
-                    val title =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE))
-                    val displayName =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME))
-                    val size =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE))
-                    val duration =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
-                    val path =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA))
-                    val dateAdded =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED))
-                    val mimeType =
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE))
-                    val videoFile =
-                        VideoFile(id, title, displayName, size, duration, path, dateAdded, mimeType)
-
-                    val folderPath = path.substringBeforeLast('/')
-                    val foundFolder = videoFolders.find { it.folderPath == folderPath }
-                    // add video file to video folder if it the folder exists in video folder list
-                    // if not, add video folder with the video file to video folder list
-                    if (foundFolder != null) {
-                        foundFolder.items.add(videoFile)
-                    } else {
-                        videoFolders.add(VideoFolder(folderPath, mutableListOf(videoFile)))
-                    }
-                }
-            }
+        val videoFolders = VideoDataManager.getVideoFolders(this)
         videoFoldersAdapter.submitList(videoFolders)
     }
 

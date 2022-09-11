@@ -1,16 +1,18 @@
 package com.example.videoplayer.models
 
+import android.net.Uri
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class VideoFile(
-    val id: String,
+    val id: Long,
     val title: String,
     val displayName: String,
-    val size: String,
-    val duration: String,
+    val size: Long,
+    val duration: Long,
     val path: String,
     val dateAdded: String,
-    val mimeType: String
+    val mimeType: String,
+    val contentUri: Uri
 ): Parcelable

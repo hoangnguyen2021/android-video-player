@@ -11,19 +11,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Options"
-        android:textSize="20sp"
         android:layout_gravity="center_horizontal"
-        />
+        android:text="@string/options"
+        android:textSize="20sp" />
 
     <LinearLayout
         android:id="@+id/bottom_sheet_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="11dp"
         android:background="?attr/selectableItemBackground"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="11dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -35,9 +34,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Play Video"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
-            android:layout_gravity="center_vertical" />
+            android:text="@string/play_video"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 
@@ -45,10 +45,10 @@
         android:id="@+id/bottom_sheet_rename"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="11dp"
         android:background="?attr/selectableItemBackground"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="11dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -60,9 +60,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rename"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
-            android:layout_gravity="center_vertical" />
+            android:text="@string/rename"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 
@@ -70,10 +71,10 @@
         android:id="@+id/bottom_sheet_share"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="11dp"
         android:background="?attr/selectableItemBackground"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="11dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -85,9 +86,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Share"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
-            android:layout_gravity="center_vertical" />
+            android:text="@string/share"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 
@@ -95,10 +97,10 @@
         android:id="@+id/bottom_sheet_delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="11dp"
         android:background="?attr/selectableItemBackground"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="11dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -110,9 +112,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
-            android:layout_gravity="center_vertical" />
+            android:text="Delete"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 
@@ -120,10 +123,10 @@
         android:id="@+id/bottom_properties"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="11dp"
         android:background="?attr/selectableItemBackground"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="11dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -135,9 +138,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Properties"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
-            android:layout_gravity="center_vertical" />
+            android:text="Properties"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 

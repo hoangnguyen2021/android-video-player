@@ -31,13 +31,15 @@ class VideoFilesAdapter(
 
         fun bind(videoFile: VideoFile, position: Int) {
             videoNameTv.text = videoFile.displayName
-            videoSizeTv.text = Formatter.formatFileSize(itemView.context, videoFile.size.toLong())
-            videoDurationTv.text = Utils.convertMillisToTime(videoFile.duration.toLong())
+            videoSizeTv.text = Formatter.formatFileSize(itemView.context, videoFile.size)
+            videoDurationTv.text = Utils.convertMillisToTime(videoFile.duration)
             Glide.with(itemView.context)
                 .load(File(videoFile.path))
                 .into(thumbnailIv)
             menuMoreIv.setOnClickListener {
-                VideoBottomSheetDialogFragment(currentList, videoFile, position, videoFileClickListener)
+                VideoBottomSheetDialogFragment(
+                    this@VideoFilesAdapter, videoFile, itemView
+                )
                     .show(
                         (context as AppCompatActivity).supportFragmentManager,
                         VideoBottomSheetDialogFragment.TAG
