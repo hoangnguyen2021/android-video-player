@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.videoplayer.R
 import com.example.videoplayer.adapters.VideoFilesAdapter
 import com.example.videoplayer.data.VideoDataManager
 
 class VideoFilesActivity : AppCompatActivity() {
 
+    private lateinit var foldersSwipeRefresh: SwipeRefreshLayout
     private lateinit var videoFilesRv: RecyclerView
     private lateinit var videoFilesAdapter: VideoFilesAdapter
 
@@ -24,9 +26,15 @@ class VideoFilesActivity : AppCompatActivity() {
         folderPath = intent.getStringExtra(FOLDER_PATH)
         supportActionBar?.title = folderPath?.substringAfterLast('/')
 
+        foldersSwipeRefresh = findViewById(R.id.swipe_refresh_files)
         videoFilesRv = findViewById(R.id.rv_video_files)
 
         initVideoFilesRv()
+
+        foldersSwipeRefresh.setOnRefreshListener {
+            folderPath?.let { loadVideoFiles(it) }
+            foldersSwipeRefresh.isRefreshing = false
+        }
     }
 
     override fun onResume() {

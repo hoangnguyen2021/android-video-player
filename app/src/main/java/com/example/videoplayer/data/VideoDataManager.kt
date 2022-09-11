@@ -2,10 +2,7 @@ package com.example.videoplayer.data
 
 import android.content.ContentUris
 import android.content.Context
-import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
-import androidx.annotation.RequiresApi
 import com.example.videoplayer.models.VideoFile
 import com.example.videoplayer.models.VideoFolder
 
@@ -23,7 +20,9 @@ object VideoDataManager {
             MediaStore.Video.Media.DURATION,
             MediaStore.Video.Media.DATA,
             MediaStore.Video.Media.DATE_ADDED,
-            MediaStore.Video.Media.MIME_TYPE
+            MediaStore.Video.Media.MIME_TYPE,
+            MediaStore.Video.Media.WIDTH,
+            MediaStore.Video.Media.HEIGHT
         )
         context.contentResolver
             .query(uri, projection, null, null, null)
@@ -45,21 +44,15 @@ object VideoDataManager {
                         cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED))
                     val mimeType =
                         cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE))
+                    val width =
+                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.WIDTH))
+                    val height =
+                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.HEIGHT))
                     val contentUri = ContentUris
                         .withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
 
                     val videoFile =
-                        VideoFile(
-                            id,
-                            title,
-                            displayName,
-                            size,
-                            duration,
-                            path,
-                            dateAdded,
-                            mimeType,
-                            contentUri
-                        )
+                        VideoFile(id, title, displayName, size, duration, path, dateAdded, mimeType, width, height, contentUri)
 
                     val folderPath = path.substringBeforeLast('/')
                     val foundFolder = videoFolders.find { it.folderPath == folderPath }
@@ -87,7 +80,9 @@ object VideoDataManager {
             MediaStore.Video.Media.DURATION,
             MediaStore.Video.Media.DATA,
             MediaStore.Video.Media.DATE_ADDED,
-            MediaStore.Video.Media.MIME_TYPE
+            MediaStore.Video.Media.MIME_TYPE,
+            MediaStore.Video.Media.WIDTH,
+            MediaStore.Video.Media.HEIGHT
         )
         val selection = "${MediaStore.Video.Media.DATA} LIKE ?"
         val selectionArgs = arrayOf("$folderPath%")
@@ -111,11 +106,15 @@ object VideoDataManager {
                         cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED))
                     val mimeType =
                         cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE))
+                    val width =
+                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.WIDTH))
+                    val height =
+                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.HEIGHT))
                     val contentUri = ContentUris
                         .withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
 
                     videoFiles.add(
-                        VideoFile(id, title, displayName, size, duration, path, dateAdded, mimeType, contentUri)
+                        VideoFile(id, title, displayName, size, duration, path, dateAdded, mimeType, width, height, contentUri)
                     )
                 }
             }

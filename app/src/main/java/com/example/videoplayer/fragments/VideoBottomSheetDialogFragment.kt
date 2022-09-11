@@ -83,6 +83,12 @@ class VideoBottomSheetDialogFragment(
                     .show(parentFragmentManager, VideoDeleteDialogFragment.TAG)
                 dismiss()
             }
+        view.findViewById<LinearLayout>(R.id.bottom_sheet_properties)
+            .setOnClickListener {
+                VideoPropertiesDialogFragment(videoFile)
+                    .show(parentFragmentManager, VideoPropertiesDialogFragment.TAG)
+                dismiss()
+            }
     }
 
     companion object {

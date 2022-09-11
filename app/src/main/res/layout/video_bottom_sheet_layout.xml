@@ -120,7 +120,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_properties"
+        android:id="@+id/bottom_sheet_properties"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"

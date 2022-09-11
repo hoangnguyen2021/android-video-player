@@ -14,5 +14,7 @@ data class VideoFile(
     val path: String,
     val dateAdded: String,
     val mimeType: String,
+    val width: Int,
+    val height: Int,
     val contentUri: Uri
 ): Parcelable

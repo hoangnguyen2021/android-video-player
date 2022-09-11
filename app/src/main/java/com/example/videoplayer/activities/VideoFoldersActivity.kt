@@ -21,7 +21,7 @@ class VideoFoldersActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_video_folders)
 
         foldersSwipeRefresh = findViewById(R.id.swipe_refresh_folders)
         videoFoldersRv = findViewById(R.id.rv_video_folders)
