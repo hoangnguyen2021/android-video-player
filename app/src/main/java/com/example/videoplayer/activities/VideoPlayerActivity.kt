@@ -9,7 +9,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -139,8 +138,7 @@ class VideoPlayerActivity : AppCompatActivity() {
             }
 
             val videoFile: VideoFile = intent.getParcelableExtra(VIDEO_FILE)!!
-            val videoTitle: String = videoFile.title
-            videoTitleTv.text = videoTitle
+            videoTitleTv.text = videoFile.title
 
             val exoPlayerBuilder = ExoPlayer.Builder(this)
                 .setMediaSourceFactory(createMediaSourceFactory())
