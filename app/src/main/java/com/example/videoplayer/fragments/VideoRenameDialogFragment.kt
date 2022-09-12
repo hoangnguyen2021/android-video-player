@@ -5,7 +5,10 @@ import android.content.ContentValues
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -18,9 +21,24 @@ class VideoRenameDialogFragment(
     private val videoFile: VideoFile
 ) : DialogFragment() {
 
+    private lateinit var editText: EditText
+    private var positiveButton: Button? = null
+    private val originalName: String =
+        videoFile.path.substringAfterLast('/').substringBeforeLast('.')
+
+    private val textWatcher = object: TextWatcher {
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(s: Editable) {
+            positiveButton?.isEnabled = s.isNotEmpty() && s.toString() != originalName
+        }
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val editText = EditText(requireContext()).apply {
-            setText(videoFile.path.substringAfterLast('/').substringBeforeLast('.'))
+        editText = EditText(requireContext()).apply {
+            setText(originalName)
             requestFocus()
         }
 
@@ -62,10 +80,26 @@ class VideoRenameDialogFragment(
             }
             .setNegativeButton("Cancel") { _, _ -> }
             .create()
-            .also {
+            .apply {
                 // force the soft keyboard to appear
-                it.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+                window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
             }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        positiveButton = (dialog as? AlertDialog)?.getButton(AlertDialog.BUTTON_POSITIVE)
+        positiveButton?.apply {
+            isEnabled = false
+            editText.addTextChangedListener(textWatcher)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        editText.removeTextChangedListener(textWatcher)
     }
 
     companion object {
