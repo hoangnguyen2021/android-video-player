@@ -9,4 +9,8 @@
     <string name="play_video">Play Video</string>
     <string name="rename">Rename</string>
     <string name="share">Share</string>
+    <string name="folder_name">Folder Name</string>
+    <string name="folder_path">Folder Path</string>
+    <string name="video_name">Video Name</string>
+    <string name="_4_mb">4 MB</string>
 </resources>
