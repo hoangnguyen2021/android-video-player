@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/rate_us"
         android:title="@string/rate_us"
-        android:icon="@drawable/ic_round_star_rate_24"
+        android:icon="@drawable/ic_star"
         app:showAsAction="ifRoom" />
     <item android:id="@+id/refresh_folders"
         android:title="@string/refresh"

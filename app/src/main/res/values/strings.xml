@@ -13,4 +13,6 @@
     <string name="folder_path">Folder Path</string>
     <string name="video_name">Video Name</string>
     <string name="_4_mb">4 MB</string>
+    <string name="search">Search</string>
+    <string name="sort_by">Sort by</string>
 </resources>

@@ -41,7 +41,7 @@ class VideoFoldersActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.folder_menu, menu)
+        menuInflater.inflate(R.menu.video_folder_menu, menu)
 
         return super.onCreateOptionsMenu(menu)
     }

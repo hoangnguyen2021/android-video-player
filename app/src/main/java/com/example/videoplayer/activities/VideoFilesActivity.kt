@@ -3,6 +3,8 @@ package com.example.videoplayer.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -10,7 +12,7 @@ import com.example.videoplayer.R
 import com.example.videoplayer.adapters.VideoFilesAdapter
 import com.example.videoplayer.data.VideoDataManager
 
-class VideoFilesActivity : AppCompatActivity() {
+class VideoFilesActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     private lateinit var foldersSwipeRefresh: SwipeRefreshLayout
     private lateinit var videoFilesRv: RecyclerView
@@ -32,7 +34,7 @@ class VideoFilesActivity : AppCompatActivity() {
         initVideoFilesRv()
 
         foldersSwipeRefresh.setOnRefreshListener {
-            folderPath?.let { loadVideoFiles(it) }
+            loadVideoFiles(folderPath)
             foldersSwipeRefresh.isRefreshing = false
         }
     }
@@ -40,12 +42,30 @@ class VideoFilesActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        folderPath?.let { loadVideoFiles(it) }
+        loadVideoFiles(folderPath)
     }
 
-    private fun loadVideoFiles(folderPath: String) {
-        val videoFolder = VideoDataManager.getVideoFolder(this, folderPath)
-        videoFilesAdapter.submitList(videoFolder.items)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.video_file_menu, menu)
+        val searchView = menu.findItem(R.id.search).actionView as SearchView
+        searchView.setOnQueryTextListener(this)
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun loadVideoFiles(folderPath: String?, query: String? = null) {
+        if (folderPath == null) {
+            videoFilesAdapter.submitList(emptyList())
+        } else {
+            val videoFolder = VideoDataManager.getVideoFolder(this, folderPath)
+            if (query == null) {
+                videoFilesAdapter.submitList(videoFolder.items)
+            } else {
+                videoFilesAdapter.submitList(
+                    videoFolder.items.filter { it.title.contains(query, true) }
+                )
+            }
+        }
     }
 
     private fun initVideoFilesRv() {
@@ -71,6 +91,16 @@ class VideoFilesActivity : AppCompatActivity() {
                 this@VideoFilesActivity, RecyclerView.VERTICAL, false
             )
         }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        loadVideoFiles(folderPath, newText)
+
+        return true
     }
 
     companion object {
